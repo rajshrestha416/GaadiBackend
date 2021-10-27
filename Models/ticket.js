@@ -1,28 +1,28 @@
-const {Model} = require("objection")
+// const {Model} = require("objection")
 
-class Ticket extends Model{
-    static get tableName(){
-        return 'tickets'
-    }
-    static get idColumn(){
-        return 'id'
-    }
-    static get relationMappings(){
-        const User = require("./userController")
+// class Ticket extends Model{
+//     static get tableName(){
+//         return 'tickets'
+//     }
+//     static get idColumn(){
+//         return 'id'
+//     }
+//     static get relationMappings(){
+//         const User = require("./userController")
         
-        return {
-            user:{
-                relation:Model.BelongsToOneRelation,
-                modelClass:User,
-                join:{
-                    join: {
-                        from: "tickets.user_id",
-                        to: "users.user_id",
-                      },
-                }
-            }
-        }
-    }
-}
+//         return {
+//             user:{
+//                 relation:Model.BelongsToOneRelation,
+//                 modelClass:User,
+//                 join:{
+//                     join: {
+//                         from: "tickets.user_id",
+//                         to: "users.user_id",
+//                       },
+//                 }
+//             }
+//         }
+//     }
+// }
 
-module.exports = Ticket
+// module.exports = Ticket

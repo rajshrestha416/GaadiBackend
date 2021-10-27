@@ -12,7 +12,7 @@ class User extends Model {
 
   static get relationMappings() {
     const Job = require("./job");
-    const Part = require("./part");
+    const Part = require("./parts");
     const Ticket = require("./ticket");
     const Training = require("../Controllers/training");
     const Decoration = require("./decoration");

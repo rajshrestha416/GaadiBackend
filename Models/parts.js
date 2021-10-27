@@ -1,6 +1,6 @@
 const {Model} = require('objection')
 
-class Part extends Model{
+class Parts extends Model{
     static get tableName(){
         return 'parts'
     }
@@ -23,4 +23,4 @@ class Part extends Model{
     }
 }
 
-module.exports = Part
+module.exports = Parts

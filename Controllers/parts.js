@@ -1,22 +1,21 @@
-const Job = require("../Models/job");
+const Parts = require("../Models/parts");
 
-class JobController {
-    async addJob(req, res) {
+class PartsController {
+    async addParts(req, res) {
         let data = {
-            job_name: req.body.name,
-            description: req.body.description,
-            salary: req.body.salary,
-            time: req.body.time,
-            submission_deadline: req.body.submission_deadline,
+            name: req.body.name,
+            price: req.body.price,
+            make: req.body.make,
+            model: req.body.model,
             user_id: req.body.user_id
         };
         try {
-            const result = await Job.query().insert(data);
+            const result = await Parts.query().insert(data);
 
             if (result) {
                 res.status(200).json({
                     success: true,
-                    message: "Job Added",
+                    message: "Parts Added",
                     result: result
                 });
             }
@@ -30,121 +29,121 @@ class JobController {
         catch (err) {
             res.status(400).json({
                 success: false,
-                message: "Failed to add job",
+                message: "Failed to add Parts",
                 error: err
             });
         }
 
     }
 
-    async showJobs(req, res) {
+    async showAllParts(req, res) {
         try {
-            const result = await Job.query().select("*");
+            const result = await Parts.query().select("*");
 
             if (result) {
                 res.status(200).json({
                     success: true,
-                    message: "Availabe jobs",
+                    message: "Availabe Parts",
                     result: result
                 });
             }
             else {
                 res.status(400).json({
                     success: false,
-                    message: "Failed to retrieve jobs",
+                    message: "Failed to retrieve Parts",
                 });
             }
         }
         catch (err) {
             res.status(400).json({
                 success: false,
-                message: "Failed to retrieve jobs",
+                message: "Failed to retrieve Parts",
                 error: err
             });
         }
     }
 
-    async showJob(req, res) {
+    async showParts(req, res) {
         try {
-            const result = await Job.query().select("*").findById(req.params._id) 
+            const result = await Parts.query().select("*").findById(req.params._id) 
 
             if (result) {
                 res.status(200).json({
                     success: true,
-                    message: "Job Details of" + req.params._id,
+                    message: "Parts Details of" + req.params._id,
                     result: result
                 });
             }
             else {
                 res.status(400).json({
                     success: false,
-                    message: "Failed to retrieve job of " + req.params._id,
+                    message: "Failed to retrieve Parts of " + req.params._id,
                 });
             }
         }
         catch (err) {
             res.status(400).json({
                 success: false,
-                message: "Failed to retrieve job of " + req.params._id,
+                message: "Failed to retrieve Parts of " + req.params._id,
                 error: err
             });
         }
     }
 
-    async updateJob(req, res) {
+    async updateParts(req, res) {
         let data = req.body;
         let id = req.params._id;
         try {
-            const result = await Job.query().findById(id).patch(data)
+            const result = await Parts.query().findById(id).patch(data)
 
             if (result) {
                 res.status(200).json({
                     success: true,
-                    message: `Updated the Job Details of Job_id ${id}`
+                    message: `Updated the Parts Details of Parts_id ${id}`
                 });
             }
             else {
                 res.status(400).json({
                     success: false,
-                    message: `Failed to Update the Job`,
+                    message: `Failed to Update the Parts`,
                 });
             }
         }
         catch (err) {
             res.status(400).json({
                 success: false,
-                message: "Failed to Update the job",
+                message: "Failed to Update the Parts",
                 error: err
             });
         }
     }
 
-    async deleteJob(req, res) {
+    async deleteParts(req, res) {
         let id = req.params._id;
         try {
-            const result = await Job.query().deleteById(id)
+            const result = await Parts.query().deleteById(id)
 
             if (result) {
                 res.status(200).json({
                     success: true,
-                    message: "Deleted the job."
+                    message: "Deleted the Parts."
                 });
             }
             else {
                 res.status(400).json({
                     success: false,
-                    message: "Failed to delete the job",
+                    message: "Failed to delete the Parts",
                 });
             }
         }
         catch (err) {
             res.status(400).json({
                 success: false,
-                message: "Failed to delete the job",
+                message: "Failed to delete the Parts",
                 error: err
             });
         }
     }
 }
 
-module.exports = new JobController;
+module.exports = new PartsController;
