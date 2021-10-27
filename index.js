@@ -6,6 +6,8 @@ const auth = require("./Routes/auth")
 const job = require("./Routes/job")
 const user = require("./Routes/user")
 const decoration = require("./Routes/decoration")
+const training = require("./Routes/training")
+const vehicle = require("./Routes/vehicle")
 const event = require("./Routes/event")
 const parts = require("./Routes/parts")
 const morgan = require("morgan");
@@ -24,6 +26,8 @@ app.use("/api/job",job)
 app.use("/api/user",user)
 app.use("/api/parts",parts)
 app.use("/api/event",event)
+app.use("/api/vehicle",vehicle)
+app.use("/api/training",training)
 app.use("/api/decoration",decoration)
 
 const port = process.env.PORT

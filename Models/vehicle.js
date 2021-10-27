@@ -8,7 +8,7 @@ class Vehicle extends Model{
         return 'id'
     }
     static get relationMappings(){
-        const User = require("./userController")
+        const User = require("./user")
         
         return {
             user:{

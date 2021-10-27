@@ -11,7 +11,7 @@ class Parts extends Model{
     static get relationMappings(){
         const User = require('./user')
         return{
-            users:{
+            user:{
                 relation : Model.BelongsToOneRelation,
                 modelClass:User,
                 join:{

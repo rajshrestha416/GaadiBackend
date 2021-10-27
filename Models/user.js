@@ -12,7 +12,7 @@ class User extends Model {
 
   static get relationMappings() {
     const Job = require("./job");
-    const Part = require("./parts");
+    const Parts = require("./parts");
     const Ticket = require("./ticket");
     const Training = require("../Controllers/training");
     const Decoration = require("./decoration");
@@ -29,9 +29,9 @@ class User extends Model {
           to: "jobs.user_id",
         },
       },
-      part: {
+      parts: {
         relation: Model.HasManyRelation,
-        modelClass: Part,
+        modelClass: Parts,
         join: {
           from: "users.user_id",
           to: "parts.user_id",
