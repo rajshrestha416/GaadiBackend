@@ -6,7 +6,7 @@ class Decoration extends Model {
   }
 
   static get idColumn() {
-    return 'job_id'
+    return 'id'
   }
 
   static get relationMappings() {

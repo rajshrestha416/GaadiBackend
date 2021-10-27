@@ -14,7 +14,7 @@ class User extends Model {
     const Job = require("./job");
     const Part = require("./part");
     const Ticket = require("./ticket");
-    const Training = require("./training");
+    const Training = require("../Controllers/training");
     const Decoration = require("./decoration");
     const Event = require("./event");
     const Vehicle = require("./vehicle");

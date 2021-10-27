@@ -24,6 +24,6 @@ class Event extends Model {
     };
   }
   
-}
+}   
 
 module.exports = Event

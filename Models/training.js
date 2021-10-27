@@ -8,7 +8,7 @@ class Training extends Model{
         return 'id'
     }
     static get relationMappings(){
-        const User = require("./user")
+        const User = require("../Models/user")
         
         return {
             user:{
