@@ -10,12 +10,12 @@ class Job extends Model {
   }
 
   static get relationMappings() {
-    const user = require("./user");
+    const User = require("./user");
 
     return {
       products: {
-        relation: Model.HasManyRelation,
-        modelClass: user,
+        relation: Model.BelongsToOneRelation,
+        modelClass: User,
         join: {
           from: "jobs.user_id",
           to: "users.user_id",
