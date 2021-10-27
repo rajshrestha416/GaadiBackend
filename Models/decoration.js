@@ -13,7 +13,7 @@ class Decoration extends Model {
     const User = require("./user");
 
     return {
-      products: {
+      user: {
         relation: Model.BelongsToOneRelation,
         modelClass: User,
         join: {

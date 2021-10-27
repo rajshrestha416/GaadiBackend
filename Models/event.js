@@ -6,14 +6,14 @@ class Event extends Model {
   }
 
   static get idColumn() {
-    return 'job_id'
+    return 'event_id'
   }
 
   static get relationMappings() {
     const User = require("./user");
 
     return {
-      products: {
+      user: {
         relation: Model.BelongsToOneRelation,
         modelClass: User,
         join: {

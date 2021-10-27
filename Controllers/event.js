@@ -1,15 +1,15 @@
-const Job = require("../Models/event");
+const Event = require("../Models/event");
 
 class EventController {
     async addEvent(req, res) {
         let data = {
-            event_name: req.body.name,
-            event_date: req.body.description,
-            location: req.body.salary,
+            event_name: req.body.event_name,
+            event_date: req.body.event_date,
+            location: req.body.location,
             user_id: req.body.user_id
         };
         try {
-            const result = await Job.query().insert(data);
+            const result = await Event.query().insert(data);
 
             if (result) {
                 res.status(200).json({
@@ -35,9 +35,9 @@ class EventController {
 
     }
 
-    async showJobs(req, res) {
+    async showEvents(req, res) {
         try {
-            const result = await Job.query().select("*");
+            const result = await Event.query().select("*");
 
             if (result) {
                 res.status(200).json({
@@ -62,9 +62,9 @@ class EventController {
         }
     }
 
-    async showJob(req, res) {
+    async showEvent(req, res) {
         try {
-            const result = await Job.query().select("*").findById(req.params._id) 
+            const result = await Event.query().select("*").findById(req.params._id) 
 
             if (result) {
                 res.status(200).json({
@@ -89,11 +89,11 @@ class EventController {
         }
     }
 
-    async updateJob(req, res) {
+    async updateEvent(req, res) {
         let data = req.body;
         let id = req.params._id;
         try {
-            const result = await Job.query().findById(id).patch(data)
+            const result = await Event.query().findById(id).patch(data)
 
             if (result) {
                 res.status(200).json({
@@ -117,10 +117,10 @@ class EventController {
         }
     }
 
-    async deleteJob(req, res) {
+    async deleteEvent(req, res) {
         let id = req.params._id;
         try {
-            const result = await Job.query().deleteById(id)
+            const result = await Event.query().deleteById(id)
 
             if (result) {
                 res.status(200).json({

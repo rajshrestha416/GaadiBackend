@@ -6,6 +6,7 @@ const auth = require("./Routes/auth")
 const job = require("./Routes/job")
 const user = require("./Routes/user")
 const decoration = require("./Routes/decoration")
+const event = require("./Routes/event")
 const morgan = require("morgan");
 const { Model } = require("objection");
 
@@ -20,6 +21,7 @@ Model.knex(knex)
 app.use("/api/auth",auth)
 app.use("/api/job",job)
 app.use("/api/user",user)
+app.use("/api/event",event)
 app.use("/api/decoration",decoration)
 
 const port = process.env.PORT
