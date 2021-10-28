@@ -2,33 +2,43 @@ const {Model} = require("objection")
 
 class Vehicle extends Model{
     static get tableName(){
-        return 'vehicles'
+        return 'bookings'
     }
     static get idColumn(){
         return 'id'
     }
     static get relationMappings(){
         const User = require("./user")
-        const Booking = require("./booking")
+        const Vehicle = require("./vehicle")
         
         return {
-            user:{
+            sender:{
                 relation:Model.BelongsToOneRelation,
                 modelClass:User,
                 join:{
                     join: {
-                        from: "vehicles.user_id",
+                        from: "booking.sender",
                         to: "users.id",
                       },
                 }
             },
-            booking:{
+            receiver:{
                 relation:Model.BelongsToOneRelation,
-                modelClass:Booking,
+                modelClass:User,
                 join:{
                     join: {
-                        from: "vehicles.user_id",
-                        to: "bookings.id",
+                        from: "booking.receiver",
+                        to: "users.id",
+                      },
+                }
+            },
+            vehicle:{
+                relation:Model.BelongsToOneRelation,
+                modelClass:Vehicle,
+                join:{
+                    join: {
+                        from: "booking.vehicle_id",
+                        to: "vehicles.id",
                       },
                 }
             }

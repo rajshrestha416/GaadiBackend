@@ -3,7 +3,7 @@ exports.up = function(knex) {
         table.increments('id').primary()
         table.string('title').notNullable()
         table.string('description').notNullable()
-        table.string('image').notNullable()
+        table.specificType('image','text ARRAY').notNullable()
         table.integer('salary').notNullable()
         table.string('time').notNullable()
         table.enu('type',['FULL','PART']).notNullable()

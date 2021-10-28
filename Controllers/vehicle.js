@@ -2,11 +2,21 @@ const Vehicle = require("../Models/vehicle");
 
 class VehicleController {
     async addVehicle(req, res) {
+        // let image = req.file.path
+        // let feature = req.body.feature
+        let features = [`${req.body.feature}:${req.file.path}`]
+        let specification = [`${req.body.key}:${req.file.value}`]
+
         let data = {
-            name: req.body.name,
-            model_number: req.body.model_number,
+            title: req.body.name,
+            model: req.body.model,
+            make: req.body.make,
             price: req.body.price,
             color: req.body.color,
+            location: req.body.location,
+            specification,
+            features,
+            contacts: req.body.contact,
             user_id: req.body.user_id
         };
         try {

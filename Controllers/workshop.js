@@ -2,16 +2,23 @@ const WorkShop = require("../Models/workshop");
 
 class WorkShopController {
     async addWorkShop(req, res) {
-        let image = req.file.path
+        // console.log(req.files)
+        let features=[]
+        let images = req.files
         let feature = req.body.feature
-
-        
+        for(let i=0; i<images.features.length; i++){
+            features.push(`${feature[i]}:${images.features[i].path}`) 
+        }
+        // console.log
         let data = {
-            name: req.body.name,
+            title: req.body.title,
             price: req.body.price,
             make: req.body.make,
             model: req.body.model,
-            contact: req.body.contact,
+            contacts: req.body.contact,
+            location: req.body.location,
+            image: images.image,
+            features: features,
             user_id: req.body.user_id
         };
         try {
@@ -94,7 +101,20 @@ class WorkShopController {
     }
 
     async updateWorkShop(req, res) {
-        let data = req.body;
+        let image = req.file.path
+        let feature = req.body.feature
+        let features = [`${feature}:${image}`]
+        // console.log
+        let data = {
+            title: req.body.title,
+            price: req.body.price,
+            make: req.body.make,
+            model: req.body.model,
+            contacts: req.body.contact,
+            location: req.body.location,
+            features,
+            user_id: req.body.user_id
+        };
         let id = req.params._id;
         try {
             const result = await WorkShop.query().findById(id).patch(data)

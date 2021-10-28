@@ -4,7 +4,7 @@ exports.up = function(knex) {
         table.string('title').notNullable()
         table.string('date').notNullable()
         table.string('description').notNullable()
-        table.string('image').notNullable()
+        table.specificType('image','text ARRAY').notNullable()
         table.specificType('contacts','text ARRAY')
         table.specificType('location','integer ARRAY')
         table.integer('user_id').notNullable()

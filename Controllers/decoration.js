@@ -2,11 +2,17 @@ const Decoration = require("../Models/decoration");
 
 class DecorationController {
     async addDecoration(req, res) {
+        let image = req.files.image.map(v=>{
+            return v.path
+        })
         let data = {
-            item_name: req.body.item_name,
+            title: req.body.title,
             price: req.body.price,
             make: req.body.make,
             model: req.body.model,
+            image: image,
+            contacts: req.body.contact,
+            location: req.body.location,
             user_id: req.body.user_id
         };
         try {
@@ -90,7 +96,18 @@ class DecorationController {
     }
 
     async updateDecoration(req, res) {
-        let data = req.body;
+        let image = req.files.image.map(v=>{
+            return v.path
+        })
+        let data = {
+            title: req.body.title,
+            price: req.body.price,
+            make: req.body.make,
+            model: req.body.model,
+            image: image,
+            contacts: req.body.contact,
+            location: req.body.location
+        };
         let id = req.params._id;
         try {
             const logg = Decoration.query().select("*").findById(req.params._id)

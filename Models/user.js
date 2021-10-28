@@ -17,6 +17,7 @@ class User extends Model {
     const Event = require("./event");
     const Vehicle = require("./vehicle");
     const WorkShop = require("./workshop");
+    const Booking = require("./booking");
 
     return {
       job: {
@@ -65,6 +66,22 @@ class User extends Model {
         join: {
           from: "users.id",
           to: "workshops.user_id",
+        },
+      },
+      booking_sender: {
+        relation: Model.HasManyRelation,
+        modelClass: Booking,
+        join: {
+          from: "users.id",
+          to: "booking.sender",
+        },
+      },
+      booking_receiver: {
+        relation: Model.HasManyRelation,
+        modelClass: Booking,
+        join: {
+          from: "users.id",
+          to: "booking.receiver",
         },
       }
     };

@@ -1,6 +1,7 @@
 const {Router} = require('express')
 const router = Router()
 const PartController = require("../Controllers/parts")
+const upload = require("../Middlewares/upload")
 
 router.post("/",PartController.addParts)
 router.get("/",PartController.showAllParts)

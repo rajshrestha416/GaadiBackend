@@ -2,11 +2,15 @@ const Parts = require("../Models/parts");
 
 class PartsController {
     async addParts(req, res) {
+        let specification = [`${req.body.key}:${req.file.value}`]
         let data = {
-            name: req.body.name,
+            title: req.body.title,
             price: req.body.price,
             make: req.body.make,
             model: req.body.model,
+            contacts: req.body.contact,
+            location: req.body.location,
+            specification,
             user_id: req.body.user_id
         };
         try {
