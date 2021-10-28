@@ -1,14 +1,14 @@
 const {Model} = require("objection")
 
-class Vehicle extends Model{
+class WorkShop extends Model{
     static get tableName(){
-        return 'vehicles'
+        return 'workshops'
     }
     static get idColumn(){
         return 'id'
     }
     static get relationMappings(){
-        const User = require("./user")
+         const User = require("./user")
         
         return {
             user:{
@@ -16,7 +16,7 @@ class Vehicle extends Model{
                 modelClass:User,
                 join:{
                     join: {
-                        from: "vehicles.user_id",
+                        from: "workshops.user_id",
                         to: "users.id",
                       },
                 }
@@ -25,4 +25,4 @@ class Vehicle extends Model{
     }
 }
 
-module.exports = Vehicle
+module.exports = WorkShop

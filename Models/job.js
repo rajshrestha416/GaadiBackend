@@ -6,7 +6,7 @@ class Job extends Model {
   }
 
   static get idColumn() {
-    return 'job_id'
+    return 'id'
   }
 
   static get relationMappings() {
@@ -18,7 +18,7 @@ class Job extends Model {
         modelClass: User,
         join: {
           from: "jobs.user_id",
-          to: "users.user_id",
+          to: "users.id",
         },
       },
     };

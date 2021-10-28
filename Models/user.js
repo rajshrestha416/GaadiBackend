@@ -7,25 +7,23 @@ class User extends Model {
   }
 
   static get idColumn() {
-    return 'user_id'
+    return 'id'
   }
 
   static get relationMappings() {
     const Job = require("./job");
     const Parts = require("./parts");
-    const Ticket = require("./ticket");
-    const Training = require("../Controllers/training");
     const Decoration = require("./decoration");
     const Event = require("./event");
     const Vehicle = require("./vehicle");
-    const Logistic = require("./logistic");
+    const WorkShop = require("./workshop");
 
     return {
       job: {
         relation: Model.HasManyRelation,
         modelClass: Job,
         join: {
-          from: "users.user_id",
+          from: "users.id",
           to: "jobs.user_id",
         },
       },
@@ -33,31 +31,15 @@ class User extends Model {
         relation: Model.HasManyRelation,
         modelClass: Parts,
         join: {
-          from: "users.user_id",
+          from: "users.id",
           to: "parts.user_id",
-        },
-      },
-      ticket: {
-        relation: Model.HasManyRelation,
-        modelClass: Ticket,
-        join: {
-          from: "users.user_id",
-          to: "tickets.user_id",
-        },
-      },
-      training: {
-        relation: Model.HasManyRelation,
-        modelClass: Training,
-        join: {
-          from: "users.user_id",
-          to: "trainings.user_id",
         },
       },
       decoration: {
         relation: Model.HasManyRelation,
         modelClass: Decoration,
         join: {
-          from: "users.user_id",
+          from: "users.id",
           to: "decorations.user_id",
         },
       },
@@ -65,7 +47,7 @@ class User extends Model {
         relation: Model.HasManyRelation,
         modelClass: Event,
         join: {
-          from: "users.user_id",
+          from: "users.id",
           to: "events.user_id",
         },
       },
@@ -73,18 +55,18 @@ class User extends Model {
         relation: Model.HasManyRelation,
         modelClass: Vehicle,
         join: {
-          from: "users.user_id",
+          from: "users.id",
           to: "vehicles.user_id",
         },
       },
-      logistic: {
+      workshop: {
         relation: Model.HasManyRelation,
-        modelClass: Logistic,
+        modelClass: WorkShop,
         join: {
-          from: "users.user_id",
-          to: "logistics.user_id",
+          from: "users.id",
+          to: "workshops.user_id",
         },
-      },
+      }
     };
   }
 

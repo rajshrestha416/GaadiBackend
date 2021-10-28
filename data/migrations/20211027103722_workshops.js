@@ -1,10 +1,11 @@
 exports.up = function(knex) {
-    return knex.schema.createTable('events', function (table) {
+    return knex.schema.createTable('workshops', function (table) {
         table.increments('id').primary()
         table.string('title').notNullable()
-        table.string('date').notNullable()
-        table.string('description').notNullable()
-        table.string('image').notNullable()
+        table.integer('price').notNullable()
+        table.string('make').notNullable()
+        table.string('model').notNullable()
+        table.specificType('features','text ARRAY')
         table.specificType('contacts','text ARRAY')
         table.specificType('location','integer ARRAY')
         table.integer('user_id').notNullable()
@@ -15,5 +16,5 @@ exports.up = function(knex) {
 };
 
 exports.down = function(knex) {
-    return knex.schema.dropTableIfExists('events')
+    return knex.schema.dropTableIfExists('workshops')
 };

@@ -18,7 +18,7 @@ class Decoration extends Model {
         modelClass: User,
         join: {
           from: "decorations.user_id",
-          to: "users.user_id",
+          to: "users.id",
         },
       },
     };

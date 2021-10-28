@@ -6,7 +6,7 @@ class Event extends Model {
   }
 
   static get idColumn() {
-    return 'event_id'
+    return 'id'
   }
 
   static get relationMappings() {
@@ -18,7 +18,7 @@ class Event extends Model {
         modelClass: User,
         join: {
           from: "events.user_id",
-          to: "users.user_id",
+          to: "users.id",
         },
       },
     };

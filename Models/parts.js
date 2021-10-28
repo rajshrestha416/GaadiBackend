@@ -16,7 +16,7 @@ class Parts extends Model{
                 modelClass:User,
                 join:{
                     from:"parts.user_id",
-                    to:"users.user_id"
+                    to:"users.id"
                 }
             }
         }
