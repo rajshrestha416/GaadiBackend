@@ -2,7 +2,10 @@ const Parts = require("../Models/parts");
 
 class PartsController {
     async addParts(req, res) {
-        let specification = [`${req.body.key}:${req.file.value}`]
+        let image = req.files.image.map(v=>{
+            return v.path
+        })
+
         let data = {
             title: req.body.title,
             price: req.body.price,
@@ -10,9 +13,11 @@ class PartsController {
             model: req.body.model,
             contacts: req.body.contact,
             location: req.body.location,
-            specification,
+            specification: req.body.specification,
+            image,
             user_id: req.body.user_id
         };
+        
         try {
             const result = await Parts.query().insert(data);
 
@@ -42,7 +47,7 @@ class PartsController {
 
     async showAllParts(req, res) {
         try {
-            const result = await Parts.query().select("*");
+            const result = await Parts.query().eager("user").select("*");
 
             if (result) {
                 res.status(200).json({
@@ -69,7 +74,7 @@ class PartsController {
 
     async showParts(req, res) {
         try {
-            const result = await Parts.query().select("*").findById(req.params._id) 
+            const result = await Parts.query().select("*").eager("user").findById(req.params._id) 
 
             if (result) {
                 res.status(200).json({

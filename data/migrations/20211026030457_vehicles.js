@@ -10,7 +10,6 @@ exports.up = function(knex) {
         table.specificType('features','text ARRAY')
         table.specificType('contacts','text ARRAY').notNullable()
         table.specificType('location','integer ARRAY').notNullable()
-        table.specificType('specification','text ARRAY')
         table.integer('user_id').notNullable()
         table.foreign('user_id').references("users.id")
         table.timestamp('created_at').defaultTo(knex.fn.now())

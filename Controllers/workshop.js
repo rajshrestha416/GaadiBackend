@@ -4,12 +4,13 @@ class WorkShopController {
     async addWorkShop(req, res) {
         // console.log(req.files)
         let features=[]
-        let images = req.files
-        let feature = req.body.feature
-        for(let i=0; i<images.features.length; i++){
-            features.push(`${feature[i]}:${images.features[i].path}`) 
-        }
-        // console.log
+        let image = req.files.image.map(v=>{
+            return v.path
+        })
+        let feature_image = req.files.feature
+        req.body.features.map((v,k)=>{
+            features.push(`${v}:${feature_image[k].path}`)
+        })
         let data = {
             title: req.body.title,
             price: req.body.price,
@@ -17,7 +18,7 @@ class WorkShopController {
             model: req.body.model,
             contacts: req.body.contact,
             location: req.body.location,
-            image: images.image,
+            image: image,
             features: features,
             user_id: req.body.user_id
         };

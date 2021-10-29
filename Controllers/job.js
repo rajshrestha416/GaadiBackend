@@ -2,11 +2,19 @@ const Job = require("../Models/job");
 
 class JobController {
     async addJob(req, res) {
+        let image = req.files.image.map(v=>{
+            return v.path
+        })
         let data = {
-            job_name: req.body.name,
+            title: req.body.title,
             description: req.body.description,
             salary: req.body.salary,
             time: req.body.time,
+            type: req.body.type,
+            opening: req.body.opening,
+            image: image,
+            contacts: req.body.contact,
+            location: req.body.location,
             submission_deadline: req.body.submission_deadline,
             user_id: req.body.user_id
         };
@@ -92,7 +100,21 @@ class JobController {
     }
 
     async updateJob(req, res) {
-        let data = req.body;
+        let image = req.files.image.map(v=>{
+            return v.path
+        })
+        let data = {
+            title: req.body.title,
+            description: req.body.description,
+            salary: req.body.salary,
+            time: req.body.time,
+            type: req.body.type,
+            opening: req.body.opening,
+            image: image,
+            contacts: req.body.contact,
+            location: req.body.location,
+            submission_deadline: req.body.submission_deadline
+        };
         let id = req.params._id;
         try {
             const result = await Job.query().findById(id).patch(data)

@@ -36,6 +36,14 @@ class User extends Model {
           to: "parts.user_id",
         },
       },
+      vehicle: {
+        relation: Model.HasManyRelation,
+        modelClass: Vehicle,
+        join: {
+          from: "users.id",
+          to: "vehicles.user_id",
+        },
+      },
       decoration: {
         relation: Model.HasManyRelation,
         modelClass: Decoration,
@@ -50,14 +58,6 @@ class User extends Model {
         join: {
           from: "users.id",
           to: "events.user_id",
-        },
-      },
-      vehicle: {
-        relation: Model.HasManyRelation,
-        modelClass: Vehicle,
-        join: {
-          from: "users.id",
-          to: "vehicles.user_id",
         },
       },
       workshop: {

@@ -2,9 +2,15 @@ const Event = require("../Models/event");
 
 class EventController {
     async addEvent(req, res) {
+        let image = req.files.image.map(v=>{
+            return v.path
+        })
         let data = {
-            event_name: req.body.event_name,
-            event_date: req.body.event_date,
+            title: req.body.title,
+            date: req.body.date,
+            description: req.body.description,
+            image: image,
+            contacts: req.body.contact,
             location: req.body.location,
             user_id: req.body.user_id
         };
@@ -90,7 +96,17 @@ class EventController {
     }
 
     async updateEvent(req, res) {
-        let data = req.body;
+        let image = req.files.image.map(v=>{
+            return v.path
+        })
+        let data = {
+            title: req.body.title,
+            date: req.body.date,
+            description: req.body.description,
+            image: image,
+            contacts: req.body.contact,
+            location: req.body.location
+        };
         let id = req.params._id;
         try {
             const result = await Event.query().findById(id).patch(data)
