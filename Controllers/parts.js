@@ -2,9 +2,9 @@ const Parts = require("../Models/parts");
 
 class PartsController {
     async addParts(req, res) {
-        let image = req.files.image.map(v=>{
-            return v.path
-        })
+        let image = req.files.image.map(v => {
+            return v.path;
+        });
 
         let data = {
             title: req.body.title,
@@ -17,7 +17,7 @@ class PartsController {
             image,
             user_id: req.body.user_id
         };
-        
+
         try {
             const result = await Parts.query().insert(data);
 
@@ -48,7 +48,11 @@ class PartsController {
     async showAllParts(req, res) {
         try {
             const result = await Parts.query().eager("user").select("*");
-
+            result.map(v => {
+                v.specification = v.specification.map(spec => {
+                    return JSON.parse(spec);
+                });
+            });
             if (result) {
                 res.status(200).json({
                     success: true,
@@ -74,7 +78,7 @@ class PartsController {
 
     async showParts(req, res) {
         try {
-            const result = await Parts.query().select("*").eager("user").findById(req.params._id) 
+            const result = await Parts.query().select("*").eager("user").findById(req.params._id);
 
             if (result) {
                 res.status(200).json({
@@ -103,7 +107,7 @@ class PartsController {
         let data = req.body;
         let id = req.params._id;
         try {
-            const result = await Parts.query().findById(id).patch(data)
+            const result = await Parts.query().findById(id).patch(data);
 
             if (result) {
                 res.status(200).json({
@@ -130,7 +134,7 @@ class PartsController {
     async deleteParts(req, res) {
         let id = req.params._id;
         try {
-            const result = await Parts.query().deleteById(id)
+            const result = await Parts.query().deleteById(id);
 
             if (result) {
                 res.status(200).json({

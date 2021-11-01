@@ -1,10 +1,11 @@
 const Vehicle = require("../Models/vehicle");
 const Specification = require("../Models/c_specifiation");
 const { getVehicle } = require("../Models/c_specifiation");
+const { json } = require("express");
 
 class VehicleController {
     async addVehicle(req, res) {
-        let features = [];
+        let features = [`{"key":"value"}`];
         // let image = ["img1"];
         let image = req.files.image.map(v => {
             return v.path;
@@ -12,7 +13,7 @@ class VehicleController {
 
         let feature_image = req.files.feature;
         req.body.features.map((v, k) => {
-            features.push(`${v}:${feature_image[k].path}`);
+            features.push(`{${json.toString(v)}:${json.toString(feature_image[k].path)}}`);
         });
 
         let data = {
@@ -38,7 +39,7 @@ class VehicleController {
                     let specification = [];
 
                     spec.key.map((j, i) => {
-                        specification.push(`${j.key}:${j.value}`);
+                        specification.push(`${j}`);
                     });
 
                     let data = {
@@ -75,6 +76,49 @@ class VehicleController {
 
     }
 
+    async showVehicle(req, res) {
+        let id = req.params._id;
+        console.log(id);
+        try {
+            const vehicle = await Vehicle.query().withGraphFetched("user").findById(id);
+            const specifications = await Specification.query().select("*").where("vehicle_id", id);
+            const result = {
+                id: vehicle.id,
+                title: vehicle.title,
+                model: vehicle.model,
+                make: vehicle.make,
+                location: vehicle.location,
+                contact: vehicle.contacts,
+                features: vehicle.features.map(v => {
+                    return JSON.parse(v);
+                }),
+                user: `${vehicle.user.firstname} ${vehicle.user.lastname}`,
+                user: vehicle.user,
+                specifications: specifications.map(v => {
+                    let specs = v.specs.map(s => {
+                        return JSON.parse(s);
+                    });
+                    return {
+                        title: v.title,
+                        specs: specs
+                    };
+                }),
+            };
+            return res.status(200).json({
+                success: true,
+                message: "Vehicle Details of VehicleID: " + req.params._id,
+                result: result
+            });
+        }
+        catch (err) {
+            res.status(400).json({
+                success: false,
+                message: "Failed to retrieve Vehicle of ID: " + req.params._id,
+                error: err
+            });
+        }
+    }
+
     async showVehicles(req, res) {
         try {
             const result = await Vehicle.query().withGraphFetched("user");
@@ -97,52 +141,6 @@ class VehicleController {
             res.status(400).json({
                 success: false,
                 message: "Failed to retrieve the Vehicles",
-                error: err
-            });
-        }
-    }
-
-    async showVehicle(req, res) {
-        let id = req.params._id;
-        console.log(id)
-        try {
-            const vehicle = await Vehicle.query().withGraphFetched("user").findById(id);
-            const specifications = await Specification.query().select("*").where("vehicle_id", id);
-            // console.log(vehicle,specifications)
-            const result = { 
-                id:vehicle.id,
-                title:vehicle.title,
-                model:vehicle.model,
-                make:vehicle.make,
-                location:vehicle.location,
-                contact:vehicle.contacts,
-                features:vehicle.features,
-                user: `${vehicle.user.firstname} ${vehicle.user.lastname}`,
-                user: vehicle.user,
-                specifications:specifications.map(v=>{
-                    // console.log(v.specs)
-                    // console.log(v.specs)
-                    // let specs = v.specs.map(s=>{
-                    //     // let a = JSON.stringify(s)
-                    //     console.log(eval (a))
-                    //     return JSON.parse(a)
-                    // })
-                    return {
-                        title: v.title,
-                        specs: v.specs
-                    }
-                }),
-            };
-            return res.status(200).json({
-                success: true,
-                message: "Vehicle Details of VehicleID: " + req.params._id,
-                result: result
-            });
-        }
-        catch (err) {
-            res.status(400).json({
-                success: false,
-                message: "Failed to retrieve Vehicle of ID: " + req.params._id,
                 error: err
             });
         }
@@ -205,156 +203,156 @@ class VehicleController {
 
 
 
-    async addSpecification(spec, vehicle_id) {
-        console.log(vehicle_id, spec);
-        let specification = [];
+    // async addSpecification(spec, vehicle_id) {
+    //     console.log(vehicle_id, spec);
+    //     let specification = [];
 
-        spec.key.map((v, k) => {
-            specification.push(`${v.key}:${v.value[k]}`);
-        });
+    //     spec.key.map((v, k) => {
+    //         specification.push(`${v.key}:${v.value[k]}`);
+    //     });
 
-        let data = {
-            title: spec.title,
-            specs: specification,
-            vehicle_id
-        };
-        try {
-            const result = await Specification.query().insert(data);
-            if (!result) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Unable to add the Specification",
-                });
-            }
-        }
-        catch (err) {
-            return res.status(400).json({
-                success: false,
-                message: "Unable to add the Specification",
-                error: err
-            });
-        }
+    //     let data = {
+    //         title: spec.title,
+    //         specs: specification,
+    //         vehicle_id
+    //     };
+    //     try {
+    //         const result = await Specification.query().insert(data);
+    //         if (!result) {
+    //             return res.status(400).json({
+    //                 success: false,
+    //                 message: "Unable to add the Specification",
+    //             });
+    //         }
+    //     }
+    //     catch (err) {
+    //         return res.status(400).json({
+    //             success: false,
+    //             message: "Unable to add the Specification",
+    //             error: err
+    //         });
+    //     }
 
-    }
+    // }
 
-    async showSpecifications(req, res) {
-        try {
-            const result = await Specification.query().select("*");
+    // async showSpecifications(req, res) {
+    //     try {
+    //         const result = await Specification.query().select("*");
 
-            if (result) {
-                res.status(200).json({
-                    success: true,
-                    message: "Availabe Specifications",
-                    result: result
-                });
-            }
-            else {
-                res.status(400).json({
-                    success: false,
-                    message: "Failed to retrieve the Specifications",
-                });
-            }
-        }
-        catch (err) {
-            res.status(400).json({
-                success: false,
-                message: "Failed to retrieve the Specifications",
-                error: err
-            });
-        }
-    }
+    //         if (result) {
+    //             res.status(200).json({
+    //                 success: true,
+    //                 message: "Availabe Specifications",
+    //                 result: result
+    //             });
+    //         }
+    //         else {
+    //             res.status(400).json({
+    //                 success: false,
+    //                 message: "Failed to retrieve the Specifications",
+    //             });
+    //         }
+    //     }
+    //     catch (err) {
+    //         res.status(400).json({
+    //             success: false,
+    //             message: "Failed to retrieve the Specifications",
+    //             error: err
+    //         });
+    //     }
+    // }
 
-    async showSpecification(req, res) {
-        try {
-            const result = await Specification.query().select("*").findById(req.params._id);
+    // async showSpecification(req, res) {
+    //     try {
+    //         const result = await Specification.query().select("*").findById(req.params._id);
 
-            if (result) {
-                res.status(200).json({
-                    success: true,
-                    message: "Specification Details of SpecificationID: " + req.params._id,
-                    result: result
-                });
-            }
-            else {
-                res.status(400).json({
-                    success: false,
-                    message: "Failed to retrieve Specification of ID: " + req.params._id,
-                });
-            }
-        }
-        catch (err) {
-            res.status(400).json({
-                success: false,
-                message: "Failed to retrieve Specification of ID: " + req.params._id,
-                error: err
-            });
-        }
-    }
+    //         if (result) {
+    //             res.status(200).json({
+    //                 success: true,
+    //                 message: "Specification Details of SpecificationID: " + req.params._id,
+    //                 result: result
+    //             });
+    //         }
+    //         else {
+    //             res.status(400).json({
+    //                 success: false,
+    //                 message: "Failed to retrieve Specification of ID: " + req.params._id,
+    //             });
+    //         }
+    //     }
+    //     catch (err) {
+    //         res.status(400).json({
+    //             success: false,
+    //             message: "Failed to retrieve Specification of ID: " + req.params._id,
+    //             error: err
+    //         });
+    //     }
+    // }
 
-    async updateSpecification(req, res) {
-        let specification = [];
+    // async updateSpecification(req, res) {
+    //     let specification = [];
 
-        req.body.key.map((v, k) => {
-            specification.push(`${v}:${req.body.value[k]}`);
-        });
+    //     req.body.key.map((v, k) => {
+    //         specification.push(`${v}:${req.body.value[k]}`);
+    //     });
 
-        let data = {
-            title: req.body.name,
-            specification,
-            vehicle_id: req.body.vehicle_id
-        };
-        let id = req.params._id;
-        try {
-            const result = await Specification.query().findById(id).patch(data);
+    //     let data = {
+    //         title: req.body.name,
+    //         specification,
+    //         vehicle_id: req.body.vehicle_id
+    //     };
+    //     let id = req.params._id;
+    //     try {
+    //         const result = await Specification.query().findById(id).patch(data);
 
-            if (result) {
-                res.status(200).json({
-                    success: true,
-                    message: `Updated the Specification Details of Specification_id ${id}`
-                });
-            }
-            else {
-                res.status(400).json({
-                    success: false,
-                    message: `Failed to Update the Specification`,
-                });
-            }
-        }
-        catch (err) {
-            res.status(400).json({
-                success: false,
-                message: "Failed to Update the Specification",
-                error: err
-            });
-        }
-    }
+    //         if (result) {
+    //             res.status(200).json({
+    //                 success: true,
+    //                 message: `Updated the Specification Details of Specification_id ${id}`
+    //             });
+    //         }
+    //         else {
+    //             res.status(400).json({
+    //                 success: false,
+    //                 message: `Failed to Update the Specification`,
+    //             });
+    //         }
+    //     }
+    //     catch (err) {
+    //         res.status(400).json({
+    //             success: false,
+    //             message: "Failed to Update the Specification",
+    //             error: err
+    //         });
+    //     }
+    // }
 
-    async deleteSpecification(req, res) {
-        let id = req.params._id;
-        try {
-            const result = await Specification.query().deleteById(id);
+    // async deleteSpecification(req, res) {
+    //     let id = req.params._id;
+    //     try {
+    //         const result = await Specification.query().deleteById(id);
 
-            if (result) {
-                res.status(200).json({
-                    success: true,
-                    message: "Deleted the Specification."
-                });
-            }
-            else {
-                res.status(400).json({
-                    success: false,
-                    message: "Failed to delete the Specification",
-                });
-            }
-        }
-        catch (err) {
-            res.status(400).json({
-                success: false,
-                message: "Failed to delete the Specification",
-                error: err
-            });
-        }
-    }
+    //         if (result) {
+    //             res.status(200).json({
+    //                 success: true,
+    //                 message: "Deleted the Specification."
+    //             });
+    //         }
+    //         else {
+    //             res.status(400).json({
+    //                 success: false,
+    //                 message: "Failed to delete the Specification",
+    //             });
+    //         }
+    //     }
+    //     catch (err) {
+    //         res.status(400).json({
+    //             success: false,
+    //             message: "Failed to delete the Specification",
+    //             error: err
+    //         });
+    //     }
+    // }
 }
 
 module.exports = new VehicleController;

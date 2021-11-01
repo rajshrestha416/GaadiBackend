@@ -61,16 +61,20 @@ class AuthController {
     }
 
     async verifyUser(req, res) {
+        console.log(req.body.contact)
         try {
-            const query = await User.query()
-                .select("user_id", "contact", "firstname", "lastname", "password")
-                .where("contact", req.body.contact);
-            const user = query[0];
+            const result = await User.query().where("contact",req.body.contact)
+            console.log(result)
+            // const query = await User.query()
+            //     .select("user_id", "contact", "firstname", "lastname", "password")
+            //     .where("contact", req.body.contact);
+            // console.log(query)
+            const user = result[0];
             if (!user) {
                 res.status(200).json({ success: false, message: "User not found" });
             } else {
                 if (await bcrypt.compare(req.body.password, user.password)) {
-                    const authToken = user.generateAuthToken(user.user_id);
+                    const authToken = user.generateAuthToken(user.id);
                     const userData = {
                         user_id : user.user_id,
                         username: user.username,
