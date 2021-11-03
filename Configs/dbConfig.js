@@ -15,7 +15,7 @@
 //       pgtools.createdb({
 //         user: "postgres",
 //         host: "localhost",
-//         password: "password",
+//         password: "postgres",
 //         port: 5432
 //       }, "GaadiDB", function (err, res) {
 //         if (err) {

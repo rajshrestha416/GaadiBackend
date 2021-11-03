@@ -18,7 +18,7 @@ const { Model } = require("objection");
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(express.static(path.join(__dirname, 'public')))
+app.use('/pictures',express.static(path.join(__dirname, 'pictures')))
 app.use(morgan('dev'))
 
 Model.knex(knex)
