@@ -2,6 +2,8 @@ const Parts = require("../Models/parts");
 
 class PartsController {
     async addParts(req, res) {
+        console.log(req.files);
+        console.log(req.body);
         let image = req.files.image.map(v => {
             return v.path;
         });
@@ -11,13 +13,13 @@ class PartsController {
             price: req.body.price,
             make: req.body.make,
             model: req.body.model,
-            contacts: req.body.contact,
-            location: req.body.location,
-            specification: req.body.specification,
+            contacts: typeof(contact) == String ? JSON.parse(req.body.contact) : req.body.contact,
+            location: req.body.location == undefined ? [] : JSON.parse(req.body.location),
+            specification: typeof(specification) == String ? JSON.parse(req.body.specification) : req.body.specification,
             image,
             user_id: req.body.user_id
         };
-
+        console.log(data);
         try {
             const result = await Parts.query().insert(data);
 
@@ -36,6 +38,7 @@ class PartsController {
             }
         }
         catch (err) {
+            console.log(err)
             res.status(400).json({
                 success: false,
                 message: "Failed to add Parts",
@@ -77,9 +80,14 @@ class PartsController {
     }
 
     async showParts(req, res) {
+
         try {
             const result = await Parts.query().select("*").eager("user").findById(req.params._id);
-
+            console.log("RESULT",result)
+            result.specification = result.specification.map(v => {
+                console.log("muji",v);
+                return JSON.parse(v);
+            });
             if (result) {
                 res.status(200).json({
                     success: true,
