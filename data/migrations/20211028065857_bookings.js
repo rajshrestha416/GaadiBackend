@@ -4,6 +4,7 @@ exports.up = function(knex) {
         table.integer('sender').notNullable()
         table.integer('receiver').notNullable()
         table.integer('vehicle_id').notNullable()
+        table.enu('status',['Order Received','Packed', 'Shipped','Delivered']).defaultTo("Order Received")
         table.foreign('sender').references("users.id")
         table.foreign('receiver').references("users.id")
         table.foreign('vehicle_id').references("vehicles.id")

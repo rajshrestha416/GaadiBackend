@@ -1,7 +1,7 @@
 const Vehicle = require("../Models/vehicle");
 const Specification = require("../Models/c_specifiation");
-const { getVehicle } = require("../Models/c_specifiation");
-const { json } = require("express");
+const { getVehicle } = require("../Models/c_specifiation"); 
+const { ConstraintViolationError } = require("objection");
 
 class VehicleController {
     async addVehicle(req, res) {
@@ -13,7 +13,7 @@ class VehicleController {
 
         let feature_image = req.files.features;
         req.body.features.map((v, k) => {
-            features.push(`{${v}:${feature_image[k].path}}`);
+            features.push(`{${v}:${JSON.stringify(feature_image[k].path)}}`);
         });
         console.log(features);
         let data = {
@@ -28,20 +28,24 @@ class VehicleController {
             contacts: req.body.contact,
             user_id: req.body.user_id
         };
+        console.log(data);
         console.log(req.body.specification);
         try {
-            const vehicle = await Vehicle.query().insert(data);
-    
+            const result = await Vehicle.query().insert(data);
+            console.log(result);
+            const vehicle = JSON.parse(JSON.stringify(result));
 
-            if (vehicle) {
+            if (result) {
                 let specifications = req.body.specification;
                 for (let i = 0; i < specifications.length; i++) {
+                    console.log(specifications[i]);
                     let spec = JSON.parse(specifications[i]);
-                    console.log("KEY :: ",spec.key);
+                    console.log("KEY :: ", spec.key);
                     let specification = [];
 
                     spec.key.map((j, i) => {
-                        specification.push(`${j}`);
+                        // console.log()
+                        specification.push(`${JSON.stringify(j)}`);
                     });
 
                     let data = {
@@ -52,21 +56,22 @@ class VehicleController {
                     console.log(data);
 
                     try {
-                        const specifications = await Specification.query().insert(data);
+                        const specs = await Specification.query().insert(data);
+                        vehicle.specifications = specs;
                     }
                     catch (err) {
-                        return res.status(401).json({
+                        return res.status(400).json({
                             success: false,
                             message: "Unable to add the Specification",
                             error: err
                         });
                     }
                 }
+
                 return res.status(200).json({
                     success: true,
                     message: "Vehicle and Specification Added",
-                    vehicle: vehicle,
-                    specification: spec
+                    vehicle: vehicle
                 });
             }
         }
@@ -87,6 +92,21 @@ class VehicleController {
         try {
             const vehicle = await Vehicle.query().withGraphFetched("user").findById(id);
             const specifications = await Specification.query().select("*").where("vehicle_id", id);
+            const specs = specifications.map(v => {
+                let specs = v.specs.map(s => {
+                    console.log(JSON.parse(s));
+                    return JSON.parse(s);
+                });
+                console.log(specs);
+                return {
+                    title: v.title,
+                    specs: specs
+                };
+            });
+            const features = vehicle.features.map(v => {
+                return JSON.parse(v);
+            });
+            console.log(features);
             const result = {
                 id: vehicle.id,
                 title: vehicle.title,
@@ -94,20 +114,10 @@ class VehicleController {
                 make: vehicle.make,
                 location: vehicle.location,
                 contact: vehicle.contacts,
-                features: vehicle.features.map(v => {
-                    return JSON.parse(v);
-                }),
+                features: features,
                 user: `${vehicle.user.firstname} ${vehicle.user.lastname}`,
                 user: vehicle.user,
-                specifications: specifications.map(v => {
-                    let specs = v.specs.map(s => {
-                        return JSON.parse(s);
-                    });
-                    return {
-                        title: v.title,
-                        specs: specs
-                    };
-                }),
+                specifications: JSON.parse(JSON.stringify(specs)),
             };
             return res.status(200).json({
                 success: true,
@@ -181,24 +191,38 @@ class VehicleController {
 
     async deleteVehicle(req, res) {
         let id = req.params._id;
+        console.log(id);
         try {
-            const result = await Vehicle.query().deleteById(id);
+            await Specification.query().delete().where("vehicle_id", id)
+                .then(async (result) => {
+                    console.log(result);
+                    if (result > 0) {
+                        await Vehicle.query().deleteById(id).then(() => {
+                            if (result > 0) {
+                                    return res.status(200).json({
+                                        success: true,
+                                        message: "Deleted the Vehicle."
+                                    });
+                            }
+                            else {
+                                return res.status(200).json({
+                                    success: false,
+                                    message: "failed to delete the Vehicle."
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        return res.status(200).json({
+                            success: false,
+                            message: "failed to delete the Vehicle."
+                        });
+                    }
 
-            if (result) {
-                res.status(200).json({
-                    success: true,
-                    message: "Deleted the Vehicle."
                 });
-            }
-            else {
-                res.status(400).json({
-                    success: false,
-                    message: "Failed to delete the Vehicle",
-                });
-            }
         }
         catch (err) {
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: "Failed to delete the Vehicle",
                 error: err
@@ -332,32 +356,32 @@ class VehicleController {
     //     }
     // }
 
-    async deleteSpecification(req, res) {
-        let id = req.params._id;
-        try {
-            const result = await Specification.query().where();
+    // async deleteSpecification(req, res) {
+    //     let id = req.params._id;
+    //     try {
+    //         const result = await Specification.query().where("vehicle_id":id);
 
-            if (result) {
-                res.status(200).json({
-                    success: true,
-                    message: "Deleted the Specification."
-                });
-            }
-            else {
-                res.status(400).json({
-                    success: false,
-                    message: "Failed to delete the Specification",
-                });
-            }
-        }
-        catch (err) {
-            res.status(400).json({
-                success: false,
-                message: "Failed to delete the Specification",
-                error: err
-            });
-        }
-    }
+    //         if (result) {
+    //             res.status(200).json({
+    //                 success: true,
+    //                 message: "Deleted the Specification."
+    //             });
+    //         }
+    //         else {
+    //             res.status(400).json({
+    //                 success: false,
+    //                 message: "Failed to delete the Specification",
+    //             });
+    //         }
+    //     }
+    //     catch (err) {
+    //         res.status(400).json({
+    //             success: false,
+    //             message: "Failed to delete the Specification",
+    //             error: err
+    //         });
+    //     }
+    // }
 }
 
 module.exports = new VehicleController;
