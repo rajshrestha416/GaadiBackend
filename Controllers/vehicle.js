@@ -30,9 +30,10 @@ class VehicleController {
         };
 
         try {
-            const result = await Vehicle.query().insert(data);
+            const vehicle = await Vehicle.query().insert(data);
+    
 
-            if (result) {
+            if (vehicle) {
                 let specifications = req.body.specification;
                 for (let i = 0; i < specifications.length; i++) {
                     let spec = specifications[i];
@@ -50,7 +51,7 @@ class VehicleController {
                     console.log(data);
 
                     try {
-                        const result = await Specification.query().insert(data);
+                        const specifications = await Specification.query().insert(data);
                     }
                     catch (err) {
                         return res.status(401).json({
@@ -62,7 +63,9 @@ class VehicleController {
                 }
                 return res.status(200).json({
                     success: true,
-                    message: "Vehicle and Specification Added"
+                    message: "Vehicle and Specification Added",
+                    vehicle: vehicle,
+                    specification: spec
                 });
             }
         }
@@ -327,32 +330,32 @@ class VehicleController {
     //     }
     // }
 
-    // async deleteSpecification(req, res) {
-    //     let id = req.params._id;
-    //     try {
-    //         const result = await Specification.query().deleteById(id);
+    async deleteSpecification(req, res) {
+        let id = req.params._id;
+        try {
+            const result = await Specification.query().where();
 
-    //         if (result) {
-    //             res.status(200).json({
-    //                 success: true,
-    //                 message: "Deleted the Specification."
-    //             });
-    //         }
-    //         else {
-    //             res.status(400).json({
-    //                 success: false,
-    //                 message: "Failed to delete the Specification",
-    //             });
-    //         }
-    //     }
-    //     catch (err) {
-    //         res.status(400).json({
-    //             success: false,
-    //             message: "Failed to delete the Specification",
-    //             error: err
-    //         });
-    //     }
-    // }
+            if (result) {
+                res.status(200).json({
+                    success: true,
+                    message: "Deleted the Specification."
+                });
+            }
+            else {
+                res.status(400).json({
+                    success: false,
+                    message: "Failed to delete the Specification",
+                });
+            }
+        }
+        catch (err) {
+            res.status(400).json({
+                success: false,
+                message: "Failed to delete the Specification",
+                error: err
+            });
+        }
+    }
 }
 
 module.exports = new VehicleController;
