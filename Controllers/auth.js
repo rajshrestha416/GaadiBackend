@@ -1,13 +1,19 @@
 const User = require("../Models/user");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const sendEmailQueue = require("../Helpers/Mailer/sendOTP");
+const sendEmailQueue = require("../Helpers/mailer/sendOTP");
+const { validationResult } = require('express-validator');
 
 class AuthController {
     async register(req, res) {
+
+        const validationErrs = validationResult(req)
+        if(!validationErrs.array()){
+            return res.status(200).json({ success: false, errors: errors.array() });
+        }
+
         let [hashValue, expires] = req.body.hash.split('.');
         let now = Date.now();
-
         if (now > parseInt(expires)) {
             res.json({
                 success: false,
@@ -75,17 +81,17 @@ class AuthController {
             } else {
                 if (await bcrypt.compare(req.body.password, user.password)) {
                     const authToken = user.generateAuthToken(user.id);
-                    const userData = {
-                        user_id : user.user_id,
-                        username: user.username,
-                        firstname: user.firstname,
-                        lastname: user.lastname,
-                    };
+                    // const userData = {
+                    //     user_id : user.user_id,
+                    //     username: user.username,
+                    //     firstname: user.firstname,
+                    //     lastname: user.lastname,
+                    // };
                     res.status(200).json({
                         success: true,
                         message: "Login Successful",
                         authToken,
-                        user: userData,
+                        user: user,
                     });
                 } else {
                     res
@@ -97,7 +103,15 @@ class AuthController {
     }
 
     async sendOTP(req, res) {
+        console.log("Here")
+        const errors = validationResult(req);
+        console.log(errors.array())
+        
         try {
+            if (!errors.isEmpty()) {
+                return res.status(200).json({ success: false, errors: errors.array() });
+            };
+            
             const emailCheck = await User.query().select('*').where('email', req.body.email);
             if (emailCheck.length > 0) {
                 res.json({
