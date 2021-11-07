@@ -20,13 +20,13 @@ exports.registerValidator = () => {
 };
 
 
-// exports.otpValidator = 
+// exports.otpValidator =
 //     [
 //         check('email', "Enter a valid email!!").isEmpty().isEmail().normalizeEmail()
-//         .custom(async (email) => {
-//             const existingUser = await User.query().where("email", email);
-//             if (existingUser) {
-//                 throw new Error('Email already in use');
-//             }
-//         })
-//     ]
+//             .custom(async (email) => {
+//                 const existingUser = await User.query().where("email", email);
+//                 if (existingUser) {
+//                     throw new Error('Email already in use');
+//                 }
+//             })
+//     ];

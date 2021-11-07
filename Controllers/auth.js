@@ -103,15 +103,7 @@ class AuthController {
     }
 
     async sendOTP(req, res) {
-        console.log("Here")
-        const errors = validationResult(req);
-        console.log(errors.array())
-        
         try {
-            if (!errors.isEmpty()) {
-                return res.status(200).json({ success: false, errors: errors.array() });
-            };
-            
             const emailCheck = await User.query().select('*').where('email', req.body.email);
             if (emailCheck.length > 0) {
                 res.json({

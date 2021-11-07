@@ -5,6 +5,7 @@ class BookingController {
         let data = {
             sender: req.body.sender,
             receiver: req.body.receiver,
+            status: req.body.status,
             vehicle_id: req.body.vehicle_id,
             user_id: req.body.user_id
         };
