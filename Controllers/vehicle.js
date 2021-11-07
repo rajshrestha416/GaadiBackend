@@ -11,11 +11,12 @@ class VehicleController {
             return v.path;
         });
 
+        console.log(req.body);
+        console.log(req.files);
         let feature_image = req.files.features;
         req.body.features.map((v, k) => {
             features.push(`{${v}:${feature_image[k].path}}`);
         });
-        console.log(features);
         let data = {
             title: req.body.title,
             model: req.body.model,
@@ -36,7 +37,6 @@ class VehicleController {
                 let specifications = req.body.specification;
                 for (let i = 0; i < specifications.length; i++) {
                     let spec = JSON.parse(specifications[i]);
-                    console.log("KEY :: ",spec.key);
                     let specification = [];
 
                     spec.key.map((j, i) => {
@@ -48,8 +48,6 @@ class VehicleController {
                         specs: specification,
                         vehicle_id: result.id
                     };
-                    console.log(data);
-
                     try {
                         const result = await Specification.query().insert(data);
                     }

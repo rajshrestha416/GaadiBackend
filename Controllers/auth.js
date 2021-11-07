@@ -1,7 +1,7 @@
 const User = require("../Models/user");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const sendEmailQueue = require("../Helpers/mailer/sendOTP");
+const sendEmailQueue = require("../Helpers/Mailer/sendOTP");
 const { validationResult } = require('express-validator');
 
 class AuthController {
