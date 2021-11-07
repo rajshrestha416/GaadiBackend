@@ -5,30 +5,30 @@ const { json } = require("express");
 
 class VehicleController {
     async addVehicle(req, res) {
-        let features = [`{"key":"value"}`];
+        let features = [];
         // let image = ["img1"];
         let image = req.files.image.map(v => {
             return v.path;
         });
 
-        let feature_image = req.files.feature;
+        let feature_image = req.files.features;
         req.body.features.map((v, k) => {
-            features.push(`{${json.toString(v)}:${json.toString(feature_image[k].path)}}`);
+            features.push(`{${v}:${feature_image[k].path}}`);
         });
-
+        console.log(features);
         let data = {
             title: req.body.title,
             model: req.body.model,
             make: req.body.make,
             price: req.body.price,
-            color: req.body.color,
+            color: req.body.color == undefined ? [] : req.body.color,
             image,
-            location: req.body.location,
+            location: req.body.location == undefined ? [] : req.body.location,
             features,
             contacts: req.body.contact,
             user_id: req.body.user_id
         };
-
+        console.log(req.body.specification);
         try {
             const vehicle = await Vehicle.query().insert(data);
     
@@ -36,7 +36,8 @@ class VehicleController {
             if (vehicle) {
                 let specifications = req.body.specification;
                 for (let i = 0; i < specifications.length; i++) {
-                    let spec = specifications[i];
+                    let spec = JSON.parse(specifications[i]);
+                    console.log("KEY :: ",spec.key);
                     let specification = [];
 
                     spec.key.map((j, i) => {
@@ -70,6 +71,7 @@ class VehicleController {
             }
         }
         catch (err) {
+            console.log(err);
             return res.status(400).json({
                 success: false,
                 message: "Failed to add the Vehicle",
