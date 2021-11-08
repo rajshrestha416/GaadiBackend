@@ -2,10 +2,11 @@ exports.up = function(knex) {
     return knex.schema.createTable('vehicles', function (table) {
         table.increments('id').primary()
         table.string('title').notNullable()
+        table.string('description').notNullable()
         table.specificType('image','text ARRAY').notNullable()
         table.string('make').notNullable()
         table.string('model').notNullable()
-        table.integer('price').notNullable()
+        table.decimal('price').notNullable()
         table.string('color').notNullable()
         table.specificType('features','text ARRAY')
         table.specificType('contacts','text ARRAY').notNullable()

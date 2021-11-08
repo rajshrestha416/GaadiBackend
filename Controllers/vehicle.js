@@ -18,6 +18,7 @@ class VehicleController {
         let data = {
             title: req.body.title,
             model: req.body.model,
+            description: req.body.description,
             make: req.body.make,
             price: req.body.price,
             color: req.body.color == undefined ? [] : req.body.color,
@@ -27,6 +28,8 @@ class VehicleController {
             contacts: req.body.contacts == undefined ? [] : typeof(req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
             user_id: req.body.user_id
         };
+
+        console.log(data)
 
         try {
             const result = await Vehicle.query().insert(data);
