@@ -14,8 +14,9 @@ class VehicleController {
         console.log(req.body);
         console.log(req.files);
         let feature_image = req.files.features;
-        req.body.features.map((v, k) => {
-            features.push(`{${v}:${JSON.stringify(feature_image[k].path)}}`);
+        let _features = typeof(req.body.features) == "string" ? JSON.parse(req.body.features) : req.body.features;
+        _features.map((v, k) => {
+            features.push(`{"${v}":${JSON.stringify(feature_image[k].path)}}`);
         });
         let data = {
             title: req.body.title,
@@ -24,27 +25,39 @@ class VehicleController {
             price: req.body.price,
             color: req.body.color == undefined ? [] : req.body.color,
             image,
-            location: req.body.location == undefined ? [] : req.body.location,
+            location: req.body.location == undefined ? [] : typeof(req.body.location) == "string" ? JSON.parse(req.body.location) : req.body.location,
             features,
-            contacts: req.body.contact,
+            contacts: req.body.contacts == undefined ? [] : typeof(req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
             user_id: req.body.user_id
         };
-        console.log(data);
-        console.log(req.body.specification);
+        console.log("DATA ::",data);
         try {
             const result = await Vehicle.query().insert(data);
             console.log(result);
             const vehicle = JSON.parse(JSON.stringify(result));
 
             if (result) {
-                let specifications = req.body.specification;
-                for (let i = 0; i < specifications.length; i++) {
-                    console.log(specifications[i]);
-                    let spec = JSON.parse(specifications[i]);
-                    console.log("KEY :: ", spec.key);
-                    let specification = [];
+                // let specifications = typeof(req.body.specifications) == "string" ? JSON.parse(req.body.specification): req.body.specification;
 
-                    spec.key.map((j, i) => {
+                try{
+                    var specifications = JSON.parse(req.body.specification);
+                }catch(e){
+                    var specifications = req.body.specification;
+                }
+                
+                console.log("type SPEC", typeof(specifications));
+                console.log("SPece", specifications);
+                for (let i = 0; i < specifications.length; i++) {
+                    
+                    try{
+                        var spec = JSON.parse(specifications[i]);
+                    }catch(e){
+                        var spec = specifications[i];
+                    }
+
+                    let specification = [];
+                    var _key = typeof(spec.key) == "string" ? JSON.parse(spec.key) : spec.key
+                    _key.map((j, i) => {
                         // console.log()
                         specification.push(`${JSON.stringify(j)}`);
                     });
@@ -70,7 +83,7 @@ class VehicleController {
                 return res.status(200).json({
                     success: true,
                     message: "Vehicle and Specification Added",
-                    vehicle: vehicle
+                    result: vehicle
                 });
             }
         }
