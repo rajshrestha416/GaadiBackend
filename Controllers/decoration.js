@@ -12,7 +12,8 @@ class DecorationController {
             model: req.body.model,
             image: image,
             contacts: req.body.contact,
-            location: req.body.location,
+            longitude: req.body.longitude,
+            latitude: req.body.latitude,
             user_id: req.body.user_id
         };
         try {

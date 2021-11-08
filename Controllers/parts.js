@@ -14,7 +14,9 @@ class PartsController {
             make: req.body.make,
             model: req.body.model,
             contacts: typeof(contact) == String ? JSON.parse(req.body.contact) : req.body.contact,
-            location: req.body.location == undefined ? [] : JSON.parse(req.body.location),
+            longitude: req.body.longitude,
+            latitude: req.body.latitude,
+            // location: req.body.location == undefined ? [] : JSON.parse(req.body.location),
             specification: typeof(specification) == String ? JSON.parse(req.body.specification) : req.body.specification,
             image,
             user_id: req.body.user_id

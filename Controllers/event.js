@@ -11,7 +11,8 @@ class EventController {
             description: req.body.description,
             image: image,
             contacts: req.body.contact,
-            location: req.body.location,
+            longitude: req.body.longitude,
+            latitude: req.body.latitude,
             user_id: req.body.user_id
         };
         try {

@@ -24,7 +24,9 @@ class VehicleController {
             price: req.body.price,
             color: req.body.color == undefined ? [] : req.body.color,
             image,
-            location: req.body.location == undefined ? [] : typeof(req.body.location) == "string" ? JSON.parse(req.body.location) : req.body.location,
+            longitude: req.body.longitude,
+            latitude: req.body.latitude,
+            // location: req.body.location == undefined ? [] : typeof(req.body.location) == "string" ? JSON.parse(req.body.location) : req.body.location,
             features,
             contacts: req.body.contact == undefined ? [] : typeof(req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
             user_id: req.body.user_id

@@ -17,7 +17,8 @@ class WorkShopController {
             make: req.body.make,
             model: req.body.model,
             contacts: req.body.contact,
-            location: req.body.location,
+            longitude: req.body.longitude,
+            latitude: req.body.latitude,
             image: image,
             features: features,
             user_id: req.body.user_id
