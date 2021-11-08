@@ -124,13 +124,16 @@ class VehicleController {
                 title: vehicle.title,
                 model: vehicle.model,
                 make: vehicle.make,
+                price: vehicle.price,
                 location: vehicle.location,
                 contact: vehicle.contacts,
+                image: vehicle.image,
                 features: features,
                 user: `${vehicle.user.firstname} ${vehicle.user.lastname}`,
                 user: vehicle.user,
                 specifications: JSON.parse(JSON.stringify(specs)),
             };
+            console.log(result);
             return res.status(200).json({
                 success: true,
                 message: "Vehicle Details of VehicleID: " + req.params._id,
