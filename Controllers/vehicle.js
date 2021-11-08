@@ -10,6 +10,7 @@ class VehicleController {
 
         let feature_image = req.files.features;
         let _features = typeof(req.body.features) == "string" ? JSON.parse(req.body.features) : req.body.features;
+        
         _features.map((v, k) => {
             let key = ( typeof(v)=="string" ? v : JSON.stringify(v))
             features.push(`{${key}:${JSON.stringify(feature_image[k].path)}}`);
@@ -25,11 +26,9 @@ class VehicleController {
             image,
             location: req.body.location == undefined ? [] : typeof(req.body.location) == "string" ? JSON.parse(req.body.location) : req.body.location,
             features,
-            contacts: req.body.contacts == undefined ? [] : typeof(req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
+            contacts: req.body.contact == undefined ? [] : typeof(req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
             user_id: req.body.user_id
         };
-
-        console.log(data)
 
         try {
             const result = await Vehicle.query().insert(data);
@@ -37,7 +36,6 @@ class VehicleController {
             vehicle.features = vehicle.features.map(v=>{
                 return JSON.parse(v)
             })
-            console.log(vehicle.features)
             var specs = []
 
             if (result) {
@@ -84,6 +82,7 @@ class VehicleController {
                             error: err
                         });
                     }
+
                 }
                 vehicle.specifications = specs
 
@@ -109,7 +108,8 @@ class VehicleController {
         let id = req.params._id;
         try {
             const vehicle = await Vehicle.query().withGraphFetched("user").findById(id);
-            const specifications = await Specification.query().select("*").where("vehicle_id", id);
+            const specifications = await Specification.query().select("*").where("vehicle_id", id).orderBy("id","desc");
+            console.log(specifications)
             const specs = specifications.map(v => {
                 let specs = v.specs.map(s => {
                     console.log(JSON.parse(s));
@@ -155,7 +155,7 @@ class VehicleController {
 
     async showVehicles(req, res) {
         try {
-            const result = await Vehicle.query().withGraphFetched("user");
+            const result = await Vehicle.query().withGraphFetched("user").orderBy("id","desc");;
             result.map(v=>{
                 v.features = v.features.map(v2=>{
                     console.log(v2)

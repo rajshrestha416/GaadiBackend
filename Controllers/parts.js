@@ -50,7 +50,7 @@ class PartsController {
 
     async showAllParts(req, res) {
         try {
-            const result = await Parts.query().eager("user").select("*");
+            const result = await Parts.query().eager("user").select("*").orderBy("id","desc");;
             result.map(v => {
                 v.specification = v.specification.map(spec => {
                     return JSON.parse(spec);
