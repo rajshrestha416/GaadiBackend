@@ -126,7 +126,7 @@ class VehicleController {
                 features: features,
                 user: `${vehicle.user.firstname} ${vehicle.user.lastname}`,
                 user: vehicle.user,
-                specifications: JSON.parse(JSON.stringify(specs)),
+                specification: JSON.parse(JSON.stringify(specs)),
             };
             console.log(result);
             return res.status(200).json({
