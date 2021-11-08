@@ -11,7 +11,8 @@ class VehicleController {
         let feature_image = req.files.features;
         let _features = typeof(req.body.features) == "string" ? JSON.parse(req.body.features) : req.body.features;
         _features.map((v, k) => {
-            features.push(`{"${v}":${JSON.stringify(feature_image[k].path)}}`);
+            let key = ( typeof(v)=="string" ? v : JSON.stringify(v))
+            features.push(`{${key}:${JSON.stringify(feature_image[k].path)}}`);
         });
         
         let data = {
@@ -30,6 +31,10 @@ class VehicleController {
         try {
             const result = await Vehicle.query().insert(data);
             const vehicle = JSON.parse(JSON.stringify(result));
+            vehicle.features = vehicle.features.map(v=>{
+                return JSON.parse(v)
+            })
+            console.log(vehicle.features)
             var specs = []
 
             if (result) {
@@ -61,10 +66,11 @@ class VehicleController {
 
                     try {
                         let result = await Specification.query().insert(data);
+                        
                         let d = {
                             id: result.id,
                             title: result.title,
-                            key: result.specs,
+                            key: result.specs.map(v=>{return JSON.parse(v)})
                         }
                         specs.push(d)
                     }
@@ -147,6 +153,13 @@ class VehicleController {
     async showVehicles(req, res) {
         try {
             const result = await Vehicle.query().withGraphFetched("user");
+            result.map(v=>{
+                v.features = v.features.map(v2=>{
+                    console.log(v2)
+                    return JSON.parse(v2)
+                })
+                return
+            })
 
             if (result) {
                 res.status(200).json({
