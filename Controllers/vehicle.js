@@ -1,23 +1,19 @@
 const Vehicle = require("../Models/vehicle");
 const Specification = require("../Models/c_specifiation");
-const { getVehicle } = require("../Models/c_specifiation"); 
-const { ConstraintViolationError } = require("objection");
 
 class VehicleController {
     async addVehicle(req, res) {
         let features = [];
-        // let image = ["img1"];
         let image = req.files.image.map(v => {
             return v.path;
         });
 
-        console.log(req.body);
-        console.log(req.files);
         let feature_image = req.files.features;
         let _features = typeof(req.body.features) == "string" ? JSON.parse(req.body.features) : req.body.features;
         _features.map((v, k) => {
             features.push(`{"${v}":${JSON.stringify(feature_image[k].path)}}`);
         });
+        
         let data = {
             title: req.body.title,
             model: req.body.model,
@@ -30,25 +26,21 @@ class VehicleController {
             contacts: req.body.contacts == undefined ? [] : typeof(req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
             user_id: req.body.user_id
         };
-        console.log("DATA ::",data);
+
         try {
             const result = await Vehicle.query().insert(data);
-            console.log(result);
             const vehicle = JSON.parse(JSON.stringify(result));
+            var specs = []
 
             if (result) {
-                // let specifications = typeof(req.body.specifications) == "string" ? JSON.parse(req.body.specification): req.body.specification;
-
+                var specifications 
                 try{
-                    var specifications = JSON.parse(req.body.specification);
+                    specifications = JSON.parse(req.body.specification);
                 }catch(e){
-                    var specifications = req.body.specification;
+                    specifications = req.body.specification;
                 }
-                
-                console.log("type SPEC", typeof(specifications));
-                console.log("SPece", specifications);
+
                 for (let i = 0; i < specifications.length; i++) {
-                    
                     try{
                         var spec = JSON.parse(specifications[i]);
                     }catch(e){
@@ -58,7 +50,6 @@ class VehicleController {
                     let specification = [];
                     var _key = typeof(spec.key) == "string" ? JSON.parse(spec.key) : spec.key
                     _key.map((j, i) => {
-                        // console.log()
                         specification.push(`${JSON.stringify(j)}`);
                     });
 
@@ -67,9 +58,15 @@ class VehicleController {
                         specs: specification,
                         vehicle_id: result.id
                     };
+
                     try {
-                        const specs = await Specification.query().insert(data);
-                        vehicle.specifications = specs;
+                        let result = await Specification.query().insert(data);
+                        let d = {
+                            id: result.id,
+                            title: result.title,
+                            key: result.specs,
+                        }
+                        specs.push(d)
                     }
                     catch (err) {
                         return res.status(400).json({
@@ -79,6 +76,7 @@ class VehicleController {
                         });
                     }
                 }
+                vehicle.specifications = specs
 
                 return res.status(200).json({
                     success: true,
@@ -100,7 +98,6 @@ class VehicleController {
 
     async showVehicle(req, res) {
         let id = req.params._id;
-        console.log(id);
         try {
             const vehicle = await Vehicle.query().withGraphFetched("user").findById(id);
             const specifications = await Specification.query().select("*").where("vehicle_id", id);
@@ -109,16 +106,14 @@ class VehicleController {
                     console.log(JSON.parse(s));
                     return JSON.parse(s);
                 });
-                console.log(specs);
                 return {
                     title: v.title,
-                    specs: specs
+                    key: specs
                 };
             });
             const features = vehicle.features.map(v => {
                 return JSON.parse(v);
             });
-            console.log(features);
             const result = {
                 id: vehicle.id,
                 title: vehicle.title,
