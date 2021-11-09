@@ -172,9 +172,9 @@ class PartsController {
         try {
             let results = await Parts.query().select("*")
                 .withGraphFetched("user")
-                .where('title', 'like', `%${searchObj}%`)
-                .orWhere('model', 'like', `%${searchObj}%`)
-                .orWhere('make', 'like', `%${searchObj}%`)
+                .where('title', 'ilike', `%${searchObj}%`)
+                .orWhere('model', 'ilike', `%${searchObj}%`)
+                .orWhere('make', 'ilike', `%${searchObj}%`)
                 // .orWhere('description', 'like', `%${searchObj}%`)
                 .orderBy("id", "desc");
 
