@@ -13,9 +13,9 @@ class PartsController {
             price: req.body.price,
             make: req.body.make,
             model: req.body.model,
-            contacts: typeof(contact) == String ? JSON.parse(req.body.contact) : req.body.contact,
+            contacts: typeof(req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
             location: req.body.location == undefined ? [] : JSON.parse(req.body.location),
-            specification: typeof(specification) == String ? JSON.parse(req.body.specification) : req.body.specification,
+            specification: typeof(req.body.specification) == "string" ? JSON.parse(req.body.specification) : req.body.specification,
             image,
             user_id: req.body.user_id
         };
