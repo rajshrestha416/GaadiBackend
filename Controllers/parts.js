@@ -53,7 +53,7 @@ class PartsController {
 
     async showAllParts(req, res) {
         try {
-            const result = await Parts.query().eager("user").select("*").orderBy("id", "desc");;
+            const result = await Parts.query().withGraphFetched("user").select("*").orderBy("id", "desc");;
             result.map(v => {
                 v.specification = v.specification.map(spec => {
                     return JSON.parse(spec);
@@ -85,7 +85,7 @@ class PartsController {
     async showParts(req, res) {
 
         try {
-            const result = await Parts.query().select("*").eager("user").findById(req.params._id);
+            const result = await Parts.query().select("*").withGraphFetched("user").findById(req.params._id);
             result.specification = result.specification.map(v => {
                 return JSON.parse(v);
             });
@@ -174,37 +174,38 @@ class PartsController {
                 .withGraphFetched("user")
                 .where('title', 'like', `%${searchObj}%`)
                 .orWhere('model', 'like', `%${searchObj}%`)
-                .orWhere('make', 'like', `%${searchObj}%`);
-            // .orWhere('description', 'like', `%${searchObj}%`);
+                .orWhere('make', 'like', `%${searchObj}%`)
+                // .orWhere('description', 'like', `%${searchObj}%`)
+                .orderBy("id", "desc");
 
             if (results) {
-            results.map(result => {
-                result.specification = result.specification.map(v => {
-                    return JSON.parse(v);
+                results.map(result => {
+                    result.specification = result.specification.map(v => {
+                        return JSON.parse(v);
+                    });
+                    console.log(result.specification);
                 });
-                console.log(result.specification);
-            });
-            res.status(200).json({
-                success: true,
-                message: "Parts found",
-                result: results
-            });
+                res.status(200).json({
+                    success: true,
+                    message: "Parts found",
+                    result: results
+                });
+            }
+            else {
+                res.status(200).json({
+                    success: false,
+                    message: "No parts found"
+                });
+            }
         }
-        else {
-            res.status(200).json({
+        catch (err) {
+            res.status(400).json({
                 success: false,
-                message: "No parts found"
+                message: "Failed to find " + searchObj,
+                error: err
             });
         }
     }
-    catch(err) {
-        res.status(400).json({
-            success: false,
-            message: "Failed to find " + searchObj,
-            error: err
-        });
-    }
-}
 
 }
 
