@@ -11,13 +11,14 @@ class PartsController {
         let data = {
             title: req.body.title,
             price: req.body.price,
+            // description: req.body.description,
             make: req.body.make,
             model: req.body.model,
-            contacts: typeof(contact) == String ? JSON.parse(req.body.contact) : req.body.contact,
+            contacts: typeof (contact) == String ? JSON.parse(req.body.contact) : req.body.contact,
             longitude: req.body.longitude,
             latitude: req.body.latitude,
             // location: req.body.location == undefined ? [] : JSON.parse(req.body.location),
-            specification: typeof(specification) == String ? JSON.parse(req.body.specification) : req.body.specification,
+            specification: typeof (specification) == String ? JSON.parse(req.body.specification) : req.body.specification,
             image,
             user_id: req.body.user_id
         };
@@ -40,7 +41,7 @@ class PartsController {
             }
         }
         catch (err) {
-            console.log(err)
+            console.log(err);
             res.status(400).json({
                 success: false,
                 message: "Failed to add Parts",
@@ -52,7 +53,7 @@ class PartsController {
 
     async showAllParts(req, res) {
         try {
-            const result = await Parts.query().eager("user").select("*").orderBy("id","desc");;
+            const result = await Parts.query().eager("user").select("*").orderBy("id", "desc");;
             result.map(v => {
                 v.specification = v.specification.map(spec => {
                     return JSON.parse(spec);
@@ -85,9 +86,7 @@ class PartsController {
 
         try {
             const result = await Parts.query().select("*").eager("user").findById(req.params._id);
-            console.log("RESULT",result)
             result.specification = result.specification.map(v => {
-                console.log("muji",v);
                 return JSON.parse(v);
             });
             if (result) {
@@ -167,6 +166,46 @@ class PartsController {
             });
         }
     }
+
+    async searchParts(req, res) {
+        const searchObj = req.params.searchObj;
+        try {
+            let results = await Parts.query().select("*")
+                .withGraphFetched("user")
+                .where('title', 'like', `%${searchObj}%`)
+                .orWhere('model', 'like', `%${searchObj}%`)
+                .orWhere('make', 'like', `%${searchObj}%`);
+            // .orWhere('description', 'like', `%${searchObj}%`);
+
+            if (results) {
+            results.map(result => {
+                result.specification = result.specification.map(v => {
+                    return JSON.parse(v);
+                });
+                console.log(result.specification);
+            });
+            res.status(200).json({
+                success: true,
+                message: "Parts found",
+                result: results
+            });
+        }
+        else {
+            res.status(200).json({
+                success: false,
+                message: "No parts found"
+            });
+        }
+    }
+    catch(err) {
+        res.status(400).json({
+            success: false,
+            message: "Failed to find " + searchObj,
+            error: err
+        });
+    }
+}
+
 }
 
 module.exports = new PartsController;
