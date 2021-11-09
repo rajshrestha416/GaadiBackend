@@ -9,51 +9,54 @@ class VehicleController {
         });
 
         let feature_image = req.files.features;
-        let _features = typeof(req.body.features) == "string" ? JSON.parse(req.body.features) : req.body.features;
+        let _features = typeof (req.body.features) == "string" ? JSON.parse(req.body.features) : req.body.features;
+
         _features.map((v, k) => {
-            let key = ( typeof(v)=="string" ? v : JSON.stringify(v))
+            let key = (typeof (v) == "string" ? v : JSON.stringify(v));
             features.push(`{${key}:${JSON.stringify(feature_image[k].path)}}`);
         });
-        
+
         let data = {
             title: req.body.title,
             model: req.body.model,
+            description: req.body.description,
             make: req.body.make,
             price: req.body.price,
             color: req.body.color == undefined ? [] : req.body.color,
             image,
-            location: req.body.location == undefined ? [] : typeof(req.body.location) == "string" ? JSON.parse(req.body.location) : req.body.location,
+            longitude: req.body.longitude,
+            latitude: req.body.latitude,
+            // location: req.body.location == undefined ? [] : typeof(req.body.location) == "string" ? JSON.parse(req.body.location) : req.body.location,
             features,
-            contacts: req.body.contacts == undefined ? [] : typeof(req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
+            contacts: req.body.contact == undefined ? [] : typeof (req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
             user_id: req.body.user_id
         };
 
         try {
             const result = await Vehicle.query().insert(data);
             const vehicle = JSON.parse(JSON.stringify(result));
-            vehicle.features = vehicle.features.map(v=>{
-                return JSON.parse(v)
-            })
-            console.log(vehicle.features)
-            var specs = []
+            vehicle.features = vehicle.features.map(v => {
+                return JSON.parse(v);
+            });
+            var specs = [];
 
             if (result) {
-                var specifications 
-                try{
+                var specifications;
+                try {
                     specifications = JSON.parse(req.body.specification);
-                }catch(e){
+                } catch (e) {
                     specifications = req.body.specification;
                 }
 
                 for (let i = 0; i < specifications.length; i++) {
-                    try{
+                    try {
                         var spec = JSON.parse(specifications[i]);
-                    }catch(e){
+                    } catch (e) {
                         var spec = specifications[i];
                     }
 
                     let specification = [];
-                    var _key = typeof(spec.key) == "string" ? JSON.parse(spec.key) : spec.key
+                    var _key = typeof (spec.key) == "string" ? JSON.parse(spec.key) : spec.key;
                     _key.map((j, i) => {
                         specification.push(`${JSON.stringify(j)}`);
                     });
@@ -66,13 +69,13 @@ class VehicleController {
 
                     try {
                         let result = await Specification.query().insert(data);
-                        
+
                         let d = {
                             id: result.id,
                             title: result.title,
-                            key: result.specs.map(v=>{return JSON.parse(v)})
-                        }
-                        specs.push(d)
+                            key: result.specs.map(v => { return JSON.parse(v); })
+                        };
+                        specs.push(d);
                     }
                     catch (err) {
                         return res.status(400).json({
@@ -81,8 +84,9 @@ class VehicleController {
                             error: err
                         });
                     }
+
                 }
-                vehicle.specifications = specs
+                vehicle.specifications = specs;
 
                 return res.status(200).json({
                     success: true,
@@ -106,7 +110,8 @@ class VehicleController {
         let id = req.params._id;
         try {
             const vehicle = await Vehicle.query().withGraphFetched("user").findById(id);
-            const specifications = await Specification.query().select("*").where("vehicle_id", id);
+            const specifications = await Specification.query().select("*").where("vehicle_id", id).orderBy("id", "desc");
+            console.log(specifications);
             const specs = specifications.map(v => {
                 let specs = v.specs.map(s => {
                     console.log(JSON.parse(s));
@@ -152,14 +157,14 @@ class VehicleController {
 
     async showVehicles(req, res) {
         try {
-            const result = await Vehicle.query().withGraphFetched("user");
-            result.map(v=>{
-                v.features = v.features.map(v2=>{
-                    console.log(v2)
-                    return JSON.parse(v2)
-                })
-                return
-            })
+            const result = await Vehicle.query().withGraphFetched("user").orderBy("id", "desc");
+            result.map(v => {
+                v.features = v.features.map(v2 => {
+                    console.log(v2);
+                    return JSON.parse(v2);
+                });
+                return;
+            });
 
             if (result) {
                 res.status(200).json({
@@ -222,10 +227,10 @@ class VehicleController {
                     if (result > 0) {
                         await Vehicle.query().deleteById(id).then(() => {
                             if (result > 0) {
-                                    return res.status(200).json({
-                                        success: true,
-                                        message: "Deleted the Vehicle."
-                                    });
+                                return res.status(200).json({
+                                    success: true,
+                                    message: "Deleted the Vehicle."
+                                });
                             }
                             else {
                                 return res.status(200).json({
@@ -248,6 +253,46 @@ class VehicleController {
             return res.status(400).json({
                 success: false,
                 message: "Failed to delete the Vehicle",
+                error: err
+            });
+        }
+    }
+
+    async searchParts(req, res) {
+        const searchObj = req.params.searchObj;
+        try {
+            let results = await Vehicle.query().select("*")
+                .where('title', 'like', `%${searchObj}%`)
+                .orWhere('model', 'like', `%${searchObj}%`)
+                .orWhere('make', 'like', `%${searchObj}%`)
+                .orWhere('description', 'like', `%${searchObj}%`)
+                .orderBy("id", "desc");
+
+            if (results) {
+                results.map(v => {
+                    v.features = v.features.map(v2 => {
+                        console.log(v2);
+                        return JSON.parse(v2);
+                    });
+                    return;
+                });
+                res.status(200).json({
+                    success: true,
+                    message: "Parts found",
+                    result: results
+                });
+            }
+            else {
+                res.status(200).json({
+                    success: false,
+                    message: "No parts found"
+                });
+            }
+        }
+        catch (err) {
+            res.status(400).json({
+                success: false,
+                message: "Failed to find " + searchObj,
                 error: err
             });
         }

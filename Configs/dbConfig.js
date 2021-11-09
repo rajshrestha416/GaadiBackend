@@ -6,6 +6,8 @@
 //   connectionString: connectionString
 // });
 
+// console.log(process.env.DB_CONN)
+
 // ///Database connection and creation
 // client.connect().then(() => {
 //   console.log("Database connected");
@@ -15,7 +17,7 @@
 //       pgtools.createdb({
 //         user: "postgres",
 //         host: "localhost",
-//         password: "postgres",
+//         password: "password",
 //         port: 5432
 //       }, "GaadiDB", function (err, res) {
 //         if (err) {

@@ -14,7 +14,8 @@ class JobController {
             opening: req.body.opening,
             image: image,
             contacts: req.body.contact,
-            location: req.body.location,
+            longitude: req.body.longitude,
+            latitude: req.body.latitude,
             submission_deadline: req.body.submission_deadline,
             user_id: req.body.user_id
         };
