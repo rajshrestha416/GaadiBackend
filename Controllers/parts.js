@@ -175,7 +175,7 @@ class PartsController {
                 .where('title', 'ilike', `%${searchObj}%`)
                 .orWhere('model', 'ilike', `%${searchObj}%`)
                 .orWhere('make', 'ilike', `%${searchObj}%`)
-                // .orWhere('description', 'like', `%${searchObj}%`)
+                // .orWhere('description', 'ilike', `%${searchObj}%`)
                 .orderBy("id", "desc");
 
             if (results) {
