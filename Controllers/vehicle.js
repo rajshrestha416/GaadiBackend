@@ -258,10 +258,10 @@ class VehicleController {
         }
     }
 
-    async searchParts(req, res) {
+    async searchVehicles(req, res) {
         const searchObj = req.params.searchObj;
         try {
-            let results = await Vehicle.query().select("*")
+            let results = await Vehicle.query().select("*").withGraphFetched("user")
                 .where('title', 'ilike', `%${searchObj}%`)
                 .orWhere('model', 'ilike', `%${searchObj}%`)
                 .orWhere('make', 'ilike', `%${searchObj}%`)
@@ -290,6 +290,7 @@ class VehicleController {
             }
         }
         catch (err) {
+            console.log(err);
             res.status(400).json({
                 success: false,
                 message: "Failed to find " + searchObj,

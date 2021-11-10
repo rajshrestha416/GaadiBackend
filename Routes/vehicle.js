@@ -10,7 +10,7 @@ router.post("/", auth.verifyUser, upload.fields([
 ]), VehicleController.addVehicle);
 router.get("/", auth.verifyUser, VehicleController.showVehicles);
 router.get("/:_id", auth.verifyUser, VehicleController.showVehicle);
-router.get("/search/:searchObj", auth.verifyUser, VehicleController.showVehicle);
+router.get("/search/:searchObj", auth.verifyUser, VehicleController.searchVehicles);
 router.put("/:_id", auth.verifyUser, upload.fields([
     { name: "image", maxCount: 8 },
     { name: "features", maxCount: 8 }

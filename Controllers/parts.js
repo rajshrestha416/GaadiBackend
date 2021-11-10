@@ -177,13 +177,13 @@ class PartsController {
                 .orWhere('make', 'ilike', `%${searchObj}%`)
                 // .orWhere('description', 'ilike', `%${searchObj}%`)
                 .orderBy("id", "desc");
+            console.log("RESULT :: ",results);
 
             if (results) {
                 results.map(result => {
                     result.specification = result.specification.map(v => {
                         return JSON.parse(v);
                     });
-                    console.log(result.specification);
                 });
                 res.status(200).json({
                     success: true,
