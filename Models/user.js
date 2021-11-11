@@ -1,13 +1,13 @@
-const { Model } = require('objection')
-const jwt = require('jsonwebtoken')
+const { Model } = require('objection');
+const jwt = require('jsonwebtoken');
 
 class User extends Model {
   static get tableName() {
-    return 'users'
+    return 'users';
   }
 
   static get idColumn() {
-    return 'id'
+    return 'id';
   }
 
   static get relationMappings() {
@@ -18,6 +18,7 @@ class User extends Model {
     const Vehicle = require("./vehicle");
     const WorkShop = require("./workshop");
     const Booking = require("./booking");
+    const PartsBooking = require("./partsBooking");
 
     return {
       job: {
@@ -73,7 +74,7 @@ class User extends Model {
         modelClass: Booking,
         join: {
           from: "users.id",
-          to: "booking.sender",
+          to: "bookings.sender",
         },
       },
       booking_receiver: {
@@ -81,16 +82,32 @@ class User extends Model {
         modelClass: Booking,
         join: {
           from: "users.id",
-          to: "booking.receiver",
+          to: "bookings.receiver",
+        },
+      },
+      pb_sender: {
+        relation: Model.HasManyRelation,
+        modelClass: PartsBooking,
+        join: {
+          from: "users.id",
+          to: "partsBookings.sender_id",
+        },
+      },
+      pb_receiver: {
+        relation: Model.HasManyRelation,
+        modelClass: PartsBooking,
+        join: {
+          from: "users.id",
+          to: "partsBookings.receiver_id",
         },
       }
     };
   }
 
   generateAuthToken(userId) {
-    return jwt.sign({ ak: userId }, process.env.MY_SECRET_KEY)
+    return jwt.sign({ ak: userId }, process.env.MY_SECRET_KEY);
   }
-  
+
 }
 
-module.exports = User
+module.exports = User;

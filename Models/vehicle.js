@@ -26,7 +26,7 @@ class Vehicle extends Model{
                 modelClass:Booking,
                 join:{
                     join: {
-                        from: "vehicles.user_id",
+                        from: "vehicles.id",
                         to: "bookings.id",
                       },
                 }
