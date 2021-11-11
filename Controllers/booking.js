@@ -4,17 +4,13 @@ const Booking = require("../Models/booking");
 class BookingController {
     async addBooking(req, res) {
         let data = {
-            // sender_id: req.body.sender_id,
-            // receiver_id: req.body.receiver_id,
-            // status: req.body.status,
-            // parts_id: req.body.parts_id
-            sender: req.body.sender,
-            receiver: req.body.receiver,
+            sender_id: req.body.sender_id,
+            receiver_id: req.body.receiver_id,
             status: req.body.status,
             vehicle_id: req.body.vehicle_id
         };
         try {
-            console.log(data)
+            console.log(data);
             // const result = await PartsBooking.query().insert(data);
             const result = await Booking.query().insert(data);
 
@@ -33,7 +29,7 @@ class BookingController {
             }
         }
         catch (err) {
-            console.log(err)
+            console.log(err);
             res.status(400).json({
                 success: false,
                 message: "Failed to add Booking",
@@ -42,18 +38,20 @@ class BookingController {
         }
     }
 
+
     async updateBooking(req, res) {
-        let _id = req.params._id
+        let _id = req.params._id;
         let data = {
             status: req.body.status,
         };
+        
         try {
             const result = await Booking.query().findById(_id).patch(data);
 
             if (result) {
                 res.status(200).json({
                     success: true,
-                    message: "Booking Added",
+                    message: "Update Success",
                     result: result
                 });
             }
@@ -75,7 +73,9 @@ class BookingController {
 
     async showBookings(req, res) {
         try {
-            const result = await Booking.query().select("*");
+            const result = await Booking.query()
+                .withGraphFetched("[sender,receiver,vehicle]")
+                .select("status","id");
 
             if (result) {
                 res.status(200).json({
@@ -92,6 +92,7 @@ class BookingController {
             }
         }
         catch (err) {
+            console.log(err);
             res.status(400).json({
                 success: false,
                 message: "Failed to retrieve Bookings",
@@ -99,6 +100,38 @@ class BookingController {
             });
         }
     }
+
+
+    async showBooking(req, res) {
+        try {
+            const result = await Booking.query().findById(req.params._id)
+                .withGraphFetched("[sender,receiver,vehicle]")
+                .select("status","id");
+
+            if (result) {
+                res.status(200).json({
+                    success: true,
+                    message: "Availabe Bookings",
+                    result: result
+                });
+            }
+            else {
+                res.status(400).json({
+                    success: false,
+                    message: "Failed to retrieve Bookings",
+                });
+            }
+        }
+        catch (err) {
+            console.log(err);
+            res.status(400).json({
+                success: false,
+                message: "Failed to retrieve Bookings",
+                error: err
+            });
+        }
+    }
+
 
     async deleteBooking(req, res) {
         let id = req.params._id;
@@ -129,15 +162,16 @@ class BookingController {
 
     async showByUser(req, res) {
         let user = req.params._id;
+        console.log(user);
         let incoming, outgoing = [];
         try {
             incoming = await Booking.query()
-                .eager("sender", "receiver", "vehicle")
-                .select("*").where("receiver", user);
+                .withGraphFetched("[sender,receiver,vehicle]")
+                .select("*").where("receiver_id", user);
 
             outgoing = await Booking.query()
-                .eager("sender", "receiver", "vehicle")
-                .select("*").where("sender", user);
+                .withGraphFetched("[sender,receiver,vehicle]")
+                .select("*").where("sender_id", user);
 
             res.status(200).json({
                 success: true,
