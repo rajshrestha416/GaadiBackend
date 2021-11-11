@@ -26,8 +26,8 @@ class AuthController {
                 .createHmac("sha256", process.env.MY_SECRET_KEY)
                 .update(data)
                 .digest("hex");
-            
-                if (newHash === hashValue) {
+            console.log(newHash, hashValue);
+            if (newHash === hashValue) {
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -99,7 +99,9 @@ class AuthController {
                         .json({ success: false, message: "Invalid login. Please try again" });
                 }
             }
-        } catch (error) { }
+        } catch (error) { 
+            console.log(error);
+        }
     }
 
     async sendOTP(req, res) {

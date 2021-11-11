@@ -1,6 +1,6 @@
 exports.up = function(knex) {
     return knex.schema.table('vehicles', table => {
-      table.string('description');
+      table.string('description', 5000);
     })
   };
   
@@ -9,3 +9,4 @@ exports.up = function(knex) {
       table.dropColumn('description');
     })
   };
+  

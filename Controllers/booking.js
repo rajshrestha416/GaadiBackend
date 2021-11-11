@@ -7,7 +7,7 @@ class BookingController {
             receiver: req.body.receiver,
             status: req.body.status,
             vehicle_id: req.body.vehicle_id,
-            user_id: req.body.user_id
+            // user_id: req.body.user_id
         };
         try {
             const result = await Booking.query().insert(data);
@@ -27,6 +27,7 @@ class BookingController {
             }
         }
         catch (err) {
+            console.log(err);
             res.status(400).json({
                 success: false,
                 message: "Failed to add Booking",

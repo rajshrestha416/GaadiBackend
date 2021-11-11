@@ -34,6 +34,7 @@ class DecorationController {
             }
         }
         catch (err) {
+            console.log(err);
             res.status(400).json({
                 success: false,
                 message: "Failed to add Decoration",

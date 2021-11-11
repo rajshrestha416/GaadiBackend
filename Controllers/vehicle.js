@@ -7,13 +7,14 @@ class VehicleController {
         let image = req.files.image.map(v => {
             return v.path;
         });
+        console.log(req.body);
 
         let feature_image = req.files.features;
         let _features = typeof (req.body.features) == "string" ? JSON.parse(req.body.features) : req.body.features;
 
         _features.map((v, k) => {
             let key = (typeof (v) == "string" ? v : JSON.stringify(v));
-            features.push(`{${key}:${JSON.stringify(feature_image[k].path)}}`);
+            features.push(`{${JSON.stringify(key)}:${JSON.stringify(feature_image[k].path)}}`);
         });
 
         let data = {
@@ -21,16 +22,18 @@ class VehicleController {
             model: req.body.model,
             description: req.body.description,
             make: req.body.make,
-            price: req.body.price,
+            price: parseFloat(req.body.price),
             color: req.body.color == undefined ? [] : req.body.color,
             image,
-            longitude: req.body.longitude,
-            latitude: req.body.latitude,
+            longitude: parseFloat(req.body.longitude),
+            latitude: parseFloat(req.body.latitude),
             // location: req.body.location == undefined ? [] : typeof(req.body.location) == "string" ? JSON.parse(req.body.location) : req.body.location,
             features,
+            // contacts : [],
             contacts: req.body.contact == undefined ? [] : typeof (req.body.contact) == "string" ? JSON.parse(req.body.contact) : req.body.contact,
-            user_id: req.body.user_id
+            user_id: typeof(req.body.user_id) == "string" ? parseInt(req.body.user_id) : req.body.user_id
         };
+        console.log(data);
 
         try {
             const result = await Vehicle.query().insert(data);
@@ -181,6 +184,7 @@ class VehicleController {
             }
         }
         catch (err) {
+            console.log(err);
             res.status(400).json({
                 success: false,
                 message: "Failed to retrieve the Vehicles",
