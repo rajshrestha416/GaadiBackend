@@ -33,9 +33,6 @@ class BookingController {
             }
         }
         catch (err) {
-<<<<<<< HEAD
-            console.log(err);
-=======
             console.log(err)
             res.status(400).json({
                 success: false,
@@ -68,7 +65,6 @@ class BookingController {
             }
         }
         catch (err) {
->>>>>>> 3717371d1cdde8860cd0460da2a457afe7d86232
             res.status(400).json({
                 success: false,
                 message: "Failed to add Booking",
