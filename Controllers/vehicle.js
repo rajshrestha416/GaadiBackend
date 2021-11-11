@@ -184,7 +184,7 @@ class VehicleController {
             }
         }
         catch (err) {
-            console.log(err);
+            console.log(err)
             res.status(400).json({
                 success: false,
                 message: "Failed to retrieve the Vehicles",
